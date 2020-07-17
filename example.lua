@@ -15,10 +15,10 @@ scheduler.resume(coroutine.create(function()
     end
 end))
 
---// Perfomance printing of coroutine c1
+--// Performance printing of coroutine c1
 scheduler.resume(coroutine.create(function()
     while sleep(1) do
-        local perfData = scheduler.c[c1id].perfomance
+        local perfData = scheduler.c[c1id].performance
         print("Coroutine " .. c1id .. " | Calls / AVG CPU Time / TOTAL CPU Time", perfData.calls, perfData.cpuTimeSpent / perfData.calls * 1000 .. " ms", perfData.cpuTimeSpent * 1000 .. " ms")
     end
 end))

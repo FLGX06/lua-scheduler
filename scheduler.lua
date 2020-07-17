@@ -21,12 +21,12 @@ local scheduler; scheduler = {
         scheduler.lastID = id
         scheduler.runningID = id
 
-        scheduler.c[id] = {c = c; id = id; args = {...}; start = os.clock(); perfomance = {calls = 0; cpuTimeSpent = 0;};}
+        scheduler.c[id] = {c = c; id = id; args = {...}; start = os.clock(); performance = {calls = 0; cpuTimeSpent = 0;};}
 
         local start = os.clock()
         origResume(c)
-        scheduler.c[id].perfomance.calls = 1
-        scheduler.c[id].perfomance.cpuTimeSpent = os.clock() - start
+        scheduler.c[id].performance.calls = 1
+        scheduler.c[id].performance.cpuTimeSpent = os.clock() - start
 
         return id
     end;
@@ -54,8 +54,8 @@ local scheduler; scheduler = {
                     scheduler.runningID = c.id
                     local success,err = origResume(c.c)
                     local took = os.clock() - runStart
-                    c.perfomance.calls = c.perfomance.calls + 1
-                    c.perfomance.cpuTimeSpent = c.perfomance.cpuTimeSpent + took
+                    c.performance.calls = c.performance.calls + 1
+                    c.performance.cpuTimeSpent = c.performance.cpuTimeSpent + took
 
                     if not success then
                         print("Error in coroutine " .. c.id, err)
