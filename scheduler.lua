@@ -25,7 +25,7 @@ local scheduler; scheduler = {
         scheduler.c[id] = {c = c; id = id; args = {...}; start = os.clock(); performance = {calls = 0; cpuTimeSpent = 0;};}
 
         local start = os.clock()
-        origResume(c)
+        origResume(c, ...)
         scheduler.c[id].performance.calls = 1
         scheduler.c[id].performance.cpuTimeSpent = os.clock() - start
 
@@ -60,7 +60,7 @@ local scheduler; scheduler = {
                     local runStart = os.clock()
                     local prevCount = #scheduler.runningIDs
                     table.insert(scheduler.runningIDs, c.id)
-                    local success,err = origResume(c.c)
+                    local success,err = origResume(c.c, unpack(c.args))
                     local took = os.clock() - runStart
                     c.performance.calls = c.performance.calls + 1
                     c.performance.cpuTimeSpent = c.performance.cpuTimeSpent + took
