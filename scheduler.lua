@@ -10,7 +10,7 @@ local origResume = coroutine.resume
 local scheduler; scheduler = {
     c = {};
     lastID = 0;
-    runningID = 0;
+    runningIDs = {};
     waiting = {};
     missCount = 0;
     missSum = 0;
@@ -19,7 +19,8 @@ local scheduler; scheduler = {
         local id = scheduler.lastID + 1
 
         scheduler.lastID = id
-        scheduler.runningID = id
+        local prevCount = #scheduler.runningIDs
+        table.insert(scheduler.runningIDs, id)
 
         scheduler.c[id] = {c = c; id = id; args = {...}; start = os.clock(); performance = {calls = 0; cpuTimeSpent = 0;};}
 
@@ -28,11 +29,17 @@ local scheduler; scheduler = {
         scheduler.c[id].performance.calls = 1
         scheduler.c[id].performance.cpuTimeSpent = os.clock() - start
 
+        if #scheduler.runningIDs > prevCount then
+            table.remove(scheduler.runningIDs)
+        end
+
         return id
     end;
 
     resumeMeIn = function(t)
-        table.insert(scheduler.waiting, {t = os.clock() + t; id = scheduler.runningID;})
+        local id = scheduler.runningIDs[#scheduler.runningIDs]
+        table.insert(scheduler.waiting, {t = os.clock() + t; id = id;})
+        table.remove(scheduler.runningIDs)
     end;
 
     run = function()
@@ -51,11 +58,15 @@ local scheduler; scheduler = {
 
                 if c then
                     local runStart = os.clock()
-                    scheduler.runningID = c.id
+                    local prevCount = #scheduler.runningIDs
+                    table.insert(scheduler.runningIDs, c.id)
                     local success,err = origResume(c.c)
                     local took = os.clock() - runStart
                     c.performance.calls = c.performance.calls + 1
                     c.performance.cpuTimeSpent = c.performance.cpuTimeSpent + took
+                    if #scheduler.runningIDs > prevCount then
+                        table.remove(scheduler.runningIDs)
+                    end
 
                     if not success then
                         print("Error in coroutine " .. c.id, err)
