@@ -83,8 +83,9 @@ local scheduler; scheduler = {
     end;
 
     sleep = function(t)
-        scheduler.resumeMeIn(t or 0)
-        coroutine.yield()
+        local id = scheduler.resumeMeIn(t or 0)
+        local args = coroutine.yield()
+        scheduler.c[id].args = {args} --// save arguments we can use with resume
 
         return true
     end;
