@@ -12,8 +12,6 @@ local scheduler; scheduler = {
     lastID = 0;
     runningIDs = {};
     waiting = {};
-    missCount = 0;
-    missSum = 0;
 
     resume = function(c, ...)
         local id = scheduler.lastID + 1
@@ -51,8 +49,7 @@ local scheduler; scheduler = {
             local waiting = scheduler.waiting[i + offset]
 
             if os.clock() >= waiting.t then
-                scheduler.missCount = scheduler.missCount + 1
-                scheduler.missSum = scheduler.missSum + (os.clock() - waiting.t)
+                --local delay = scheduler.missSum + (os.clock() - waiting.t)
 
                 local c = scheduler.c[waiting.id]
 
