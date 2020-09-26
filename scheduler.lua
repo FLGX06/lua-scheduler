@@ -36,8 +36,11 @@ local scheduler; scheduler = {
 
     resumeMeIn = function(t)
         local id = scheduler.runningIDs[#scheduler.runningIDs]
+
         table.insert(scheduler.waiting, {t = os.clock() + t; id = id;})
         table.remove(scheduler.runningIDs)
+
+        return id
     end;
 
     run = function()
